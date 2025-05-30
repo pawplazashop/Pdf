@@ -5,17 +5,17 @@ import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 const LoginPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState(''); 
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); 
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const { signup, login, loading, error: authContextError, clearError } = useAuth();
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
-    clearError(); 
-    setFormError(null); 
+    clearError();
+    setFormError(null);
   }, [clearError, username, email, password, confirmPassword, isSignUp]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ const LoginPage: React.FC = () => {
     }
 
     if (isSignUp) {
-      if (!email.includes('@') || !email.includes('.')) { 
+      if (!email.includes('@') || !email.includes('.')) {
         setFormError("Please enter a valid email address.");
         return;
       }
@@ -78,7 +78,11 @@ const LoginPage: React.FC = () => {
                 Email Address
               </label>
               <input
-                type="email" id="signup-email" name="signup-email" value={email} onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                id="signup-email"
+                name="signup-email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 placeholder="your@email.com"
                 className="w-full px-4 py-2 border border-slate-600 rounded-md text-slate-100 bg-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 placeholder-slate-500"
@@ -91,7 +95,11 @@ const LoginPage: React.FC = () => {
               Username
             </label>
             <input
-              type="text" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)}
+              type="text"
+              id="username"
+              name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               autoComplete={isSignUp ? "new-username" : "username"}
               placeholder={isSignUp ? "Choose a username" : "Enter your username"}
               className="w-full px-4 py-2 border border-slate-600 rounded-md text-slate-100 bg-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 placeholder-slate-500"
@@ -103,7 +111,11 @@ const LoginPage: React.FC = () => {
               Password
             </label>
             <input
-              type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete={isSignUp ? "new-password" : "current-password"}
               placeholder="Enter your password"
               className="w-full px-4 py-2 border border-slate-600 rounded-md text-slate-100 bg-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 placeholder-slate-500"
@@ -116,7 +128,11 @@ const LoginPage: React.FC = () => {
                 Confirm Password
               </label>
               <input
-                type="password" id="confirmPassword" name="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"
                 placeholder="Confirm your password"
                 className="w-full px-4 py-2 border border-slate-600 rounded-md text-slate-100 bg-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 placeholder-slate-500"
@@ -127,12 +143,12 @@ const LoginPage: React.FC = () => {
 
           <div className="flex justify-center my-4">
             <HCaptcha
-              sitekey={process.env.HCAPTCHA_SITE_KEY || ''}
+              sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
               onVerify={(token) => setCaptchaToken(token)}
               onExpire={() => setCaptchaToken(null)}
             />
           </div>
-          
+
           {displayError && (
             <p className="text-red-400 text-sm text-center py-2 bg-red-900/20 border border-red-700 rounded-md" role="alert">
               {displayError}
