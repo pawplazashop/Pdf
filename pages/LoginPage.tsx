@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { ProcessingIcon } from '../components/Icons';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 const LoginPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -8,9 +9,9 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); 
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const { signup, login, loading, error: authContextError, clearError } = useAuth();
   const [formError, setFormError] = useState<string | null>(null);
-
 
   useEffect(() => {
     clearError(); 
@@ -21,6 +22,11 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setFormError(null);
     clearError();
+
+    if (!captchaToken) {
+      setFormError("Please complete the captcha verification");
+      return;
+    }
 
     if (isSignUp) {
       if (!email.includes('@') || !email.includes('.')) { 
@@ -40,7 +46,7 @@ const LoginPage: React.FC = () => {
         return;
       }
       try {
-        await signup(email, username, password);
+        await signup(email, username, password, captchaToken);
       } catch (err: any) {
         setFormError(err.message || "Signup failed. Please try again.");
       }
@@ -50,7 +56,7 @@ const LoginPage: React.FC = () => {
         return;
       }
       try {
-        await login(username, password);
+        await login(username, password, captchaToken);
       } catch (err: any) {
         setFormError(err.message || "Login failed. Please check your credentials.");
       }
@@ -118,6 +124,14 @@ const LoginPage: React.FC = () => {
               />
             </div>
           )}
+
+          <div className="flex justify-center my-4">
+            <HCaptcha
+              sitekey={process.env.HCAPTCHA_SITE_KEY || ''}
+              onVerify={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+            />
+          </div>
           
           {displayError && (
             <p className="text-red-400 text-sm text-center py-2 bg-red-900/20 border border-red-700 rounded-md" role="alert">
@@ -127,7 +141,7 @@ const LoginPage: React.FC = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !captchaToken}
             className="w-full flex items-center justify-center px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-lg shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
@@ -149,9 +163,6 @@ const LoginPage: React.FC = () => {
           >
             {isSignUp ? 'Login here' : 'Sign up now'}
           </button>
-        </p>
-         <p className="text-xs text-slate-500 mt-4 text-center">
-            User credentials and credits are managed by a conceptual backend.
         </p>
       </div>
     </div>
