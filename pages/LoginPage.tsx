@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           {isSignUp && (
             <div>
-              <label htmlFor="signup-email" className="block text-sm font-medium text-slate-300 mb-1">
+              <label htmlFor="signup-email\" className="block text-sm font-medium text-slate-300 mb-1">
                 Email Address
               </label>
               <input
